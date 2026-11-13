@@ -1,0 +1,76 @@
+name: Feature request
+description: Suggest an improvement, a new scan rule, or a new module.
+title: "[Feature]: "
+labels:
+  - "enhancement"
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea. Describe the problem first, then the proposed solution.
+
+        Features that involve the execution layer (deleting files, terminating processes,
+        creating or breaking hard links) must stay within the project's security red lines:
+        **Recycle Bin only, no permanent-delete fallback, no automatic elevation, no network
+        access, protected paths respected, preview + explicit confirmation + audit log**.
+        See [SECURITY.md](https://github.com/Mgnaer/perf-purifier/blob/main/SECURITY.md).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+      description: What is missing or painful today, and who is affected?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the requested behavior. For a scan rule, include the trigger, the evidence shown to the user, and the expected false-positive risk.
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case / scenario
+      description: Walk through how you would use this on a real Windows 10/11 machine.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: destructive
+    attributes:
+      label: Does this involve the execution layer (a destructive action)?
+      description: Execution-layer features are off by default and gated by dry run, selection, confirmation and audit logging.
+      options:
+        - "No - read-only scanning, UI, export or documentation only"
+        - "Yes - it touches files, processes or hard links"
+    validations:
+      required: true
+
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety gate description (required when the answer above is "Yes")
+      description: |
+        Explain how the feature respects the red lines: Recycle Bin only (never permanent
+        delete), no automatic elevation, no network access, protected paths/processes
+        rejected, preview + explicit selection + confirmation + audit log.
+        Write "Not applicable" for read-only proposals.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Checklist
+      options:
+        - label: I have read SECURITY.md and the security red lines.
+          required: true
+        - label: This proposal keeps read-only scanning as the default and does not bypass the Recycle Bin, add automatic elevation, or add network access.
+          required: true
+        - label: I agree to follow the Code of Conduct.
+          required: true

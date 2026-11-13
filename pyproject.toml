@@ -1,0 +1,80 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "perf-purifier"
+version = "1.2.0"
+description = "Windows local system inspector and safe cleaner: process lineage, network connections, temp usage, duplicate/large files, and disk space cleanup with a Recycle-Bin-only execution layer."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Perf Purifier contributors" }]
+keywords = [
+    "windows",
+    "system-tools",
+    "disk-cleanup",
+    "process-inspector",
+    "duplicate-files",
+    "pyside6",
+    "read-only",
+    "safety",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Win32 (MS Windows)",
+    "Environment :: X11 Applications :: Qt",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: Microsoft :: Windows :: Windows 11",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "PySide6>=6.6",
+    "psutil>=5.9",
+    "send2trash>=1.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.5"]
+
+[project.urls]
+Homepage = "https://github.com/Mgnaer/perf-purifier"
+Documentation = "https://github.com/Mgnaer/perf-purifier#readme"
+Issues = "https://github.com/Mgnaer/perf-purifier/issues"
+Security = "https://github.com/Mgnaer/perf-purifier/security/policy"
+Changelog = "https://github.com/Mgnaer/perf-purifier/blob/main/CHANGELOG.md"
+
+[project.scripts]
+perf-purifier = "perf_purifier.app:main"
+perfpurifier-cli = "perf_purifier.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/perf_purifier"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+# E501: 中文注释 + 长路径让行宽不可靠，交给 reviewer；
+# B008: Qt 的 `parent: QModelIndex = QModelIndex()` 是 PySide6 模型 API 惯例，非缺陷。
+ignore = ["E501", "B008"]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["src"]
+ignore_missing_imports = true

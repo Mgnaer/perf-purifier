@@ -1,0 +1,10 @@
+# Normalize all text files to LF in the repository.
+* text=auto eol=lf
+
+# Windows scripts stay CRLF so PowerShell 5.1 and cmd.exe behave predictably.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary assets must never be line-ending converted.
+*.png binary

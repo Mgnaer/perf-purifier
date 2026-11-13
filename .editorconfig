@@ -1,0 +1,28 @@
+# EditorConfig: https://editorconfig.org
+# Keep this file in sync with .gitattributes (line endings must not fight each other).
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{py,ps1}]
+indent_size = 4
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.{json,toml}]
+indent_size = 2
+
+[*.md]
+# Markdown uses two trailing spaces for hard line breaks.
+trim_trailing_whitespace = false
+
+[*.{ps1,bat,cmd}]
+# .gitattributes checks these out as CRLF; editors must not rewrite them to LF.
+end_of_line = crlf

@@ -1,0 +1,100 @@
+name: Bug report
+description: Report a reproducible defect in Perf Purifier (性能与净化).
+title: "[Bug]: "
+labels:
+  - "bug"
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug.
+
+        > [!IMPORTANT]
+        > Do **not** report security vulnerabilities here. Follow [SECURITY.md](https://github.com/Mgnaer/perf-purifier/blob/main/SECURITY.md)
+        > and use GitHub Security Advisories instead. Public issues must not contain
+        > exploit details.
+
+        > [!WARNING]
+        > Remove personal information before posting: user names, personal file paths,
+        > IP addresses, tokens, passwords and command-line arguments. Logs can contain
+        > all of these.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Use the About dialog (关于) or the `__version__` value.
+      placeholder: "1.2.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: windows
+    attributes:
+      label: Windows version
+      description: "Check with Win + R → `winver`. 64-bit only."
+      options:
+        - Windows 11 (64-bit)
+        - Windows 10 (64-bit)
+        - Other (please describe in the additional context)
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Exact steps in order. A numbered list works best.
+      placeholder: |
+        1. Start Perf Purifier (GUI or CLI)
+        2. Go to ...
+        3. Select ...
+        4. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead? Include error messages and any stable result/error code.
+    validations:
+      required: true
+
+  - type: input
+    id: logs
+    attributes:
+      label: Logs
+      description: "Logs live in `%LOCALAPPDATA%\\PerfPurifier\\logs\\`. Attach the file or paste a relevant excerpt, with secrets removed."
+      placeholder: "%LOCALAPPDATA%\\PerfPurifier\\logs\\"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Screenshots, configuration switches (for example `stage2_enabled`), antivirus software, or anything else that may matter.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and this is not a duplicate.
+          required: true
+        - label: I removed personal information (paths, user names, IP addresses, tokens) from this report and from any logs.
+          required: true
+        - label: This report does not disclose a security vulnerability.
+          required: true

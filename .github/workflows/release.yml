@@ -1,0 +1,100 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PYTHONUTF8: "1"
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  build:
+    name: Build Windows artifacts
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install pyinstaller
+
+      - name: Build GUI (one-folder)
+        run: |
+          python -m PyInstaller --noconfirm --clean --onedir --windowed --name PerfPurifier --paths src --collect-submodules perf_purifier --add-data "README.md;." run.py
+
+      - name: Build CLI (one-file)
+        run: |
+          # CLI 不依赖 Qt：不要 --collect-submodules（否则会把 PySide6 一起打进去）。
+          if (Test-Path run_cli.py) {
+            python -m PyInstaller --noconfirm --clean --onefile --console --name perfpurifier-cli --paths src --exclude-module PySide6 --exclude-module shiboken6 run_cli.py
+          }
+          else {
+            Write-Warning "run_cli.py not found; skipping the CLI build."
+          }
+
+      - name: Verify CLI build output
+        run: |
+          $cliExe = "dist\perfpurifier-cli.exe"
+          if (-not (Test-Path $cliExe)) {
+            throw "Build did not produce $cliExe"
+          }
+          # 冒烟：产物必须能输出版本号（不依赖 Python/Qt 运行环境）
+          $version = & $cliExe --version
+          if (-not ($version -match "perfpurifier-cli")) {
+            throw "CLI smoke test failed: unexpected output '$version'"
+          }
+          Write-Host "CLI smoke test passed: $version"
+
+      - name: Verify GUI build output
+        run: |
+          $guiExe = "dist\PerfPurifier\PerfPurifier.exe"
+          if (-not (Test-Path $guiExe)) {
+            throw "Build did not produce $guiExe"
+          }
+
+      - name: Package GUI folder
+        run: |
+          $refName = $env:GITHUB_REF_NAME
+          if (-not $refName) { $refName = "manual" }
+          $refName = $refName -replace '[^0-9A-Za-z._-]', '-'
+          $archive = "dist\PerfPurifier-$refName-windows-x64.zip"
+          Compress-Archive -Path "dist\PerfPurifier\*" -DestinationPath $archive -Force
+          Write-Host "Created $archive"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-purifier-windows-x64
+          path: dist/**
+          if-no-files-found: error
+          compression-level: 6
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/PerfPurifier-*-windows-x64.zip
+            dist/perfpurifier-cli.exe
+          fail_on_unmatched_files: false
+          generate_release_notes: true
